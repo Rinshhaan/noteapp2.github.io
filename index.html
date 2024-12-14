@@ -119,6 +119,7 @@
 
       // Add a module to a subject
       window.addModule = (subjectId) => {
+        const moduleName = prompt('Enter module name:') || 'New Module';
         const modulesContainer = document.getElementById(`modules-${subjectId}`);
         const moduleId = `module-${subjectId}-${Date.now()}`;
 
@@ -126,7 +127,7 @@
         moduleCard.classList.add('card', 'mt-2');
         moduleCard.innerHTML = `
           <div class="card-header d-flex justify-content-between align-items-center" data-bs-toggle="collapse" data-bs-target="#${moduleId}" aria-expanded="true">
-            <span>New Module</span>
+            <span>${moduleName}</span>
             <i class="fas fa-chevron-down"></i>
           </div>
           <div id="${moduleId}" class="collapse">
@@ -153,13 +154,16 @@
         const moduleCollapse = document.getElementById(moduleId);
         const listGroup = moduleCollapse.querySelector('.assignment-container .list-group');
 
-        const assignmentName = prompt('Enter assignment name:');
+        const assignmentName = prompt('Enter assignment name:') || 'New Assignment';
         if (assignmentName) {
           const listItem = document.createElement('li');
           listItem.classList.add('list-group-item');
           listItem.innerHTML = `
             <span>${assignmentName}</span>
-            <button class="btn btn-sm btn-danger" onclick="deleteItem(this)">Delete</button>
+            <div>
+              <button class="btn btn-sm btn-primary me-2" onclick="editItem(this, 'Enter new assignment name:')">Edit</button>
+              <button class="btn btn-sm btn-danger" onclick="deleteItem(this)">Delete</button>
+            </div>
           `;
           listGroup.appendChild(listItem);
         }
@@ -176,19 +180,33 @@
           const listItem = document.createElement('li');
           listItem.classList.add('list-group-item');
           listItem.innerHTML = `
-            <a href="${URL.createObjectURL(file)}" target="_blank">${file.name}</a>
-            <button class="btn btn-sm btn-danger" onclick="deleteItem(this)">Delete</button>
+            <span><a href="${URL.createObjectURL(file)}" target="_blank">${file.name}</a></span>
+            <div>
+              <button class="btn btn-sm btn-primary me-2" onclick="editItem(this, 'Enter new note name:')">Edit</button>
+              <button class="btn btn-sm btn-danger" onclick="deleteItem(this)">Delete</button>
+            </div>
           `;
           noteList.appendChild(listItem);
           noteInput.value = '';
         }
       };
 
+      // Edit an item's name
+      window.editItem = (btn, promptText) => {
+        const listItem = btn.closest('.list-group-item');
+        const span = listItem.querySelector('span');
+        const newName = prompt(promptText, span.textContent);
+        if (newName) {
+          span.textContent = newName;
+        }
+      };
+
       // Delete an item (assignment or note)
       window.deleteItem = (btn) => {
-        btn.parentElement.remove();
+        btn.parentElement.parentElement.remove();
       };
     });
   </script>
+
 </body>
 </html>
